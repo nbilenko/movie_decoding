@@ -23,29 +23,29 @@ pairwiseMeans = struct;
 pairwiseMeansMat = zeros(n,guesses,guesses);
 
 for i=[2:n]
-    codei = sprintf('data%03d',i-1);
-    codei1 = sprintf('data%03d',i);
-    lastframes = ifs.lastframes.(codei);
-    firstframes = ifs.firstframes.(codei1);
-    oc1 = im2double(squeeze(ocs.lastframes.(codei)));
-    oc2 = im2double(squeeze(ocs.firstframes.(codei1)));
+    code1 = sprintf('data%03d',i-1);
+    code2 = sprintf('data%03d',i);
+    lastframes = ifs.lastframes.(code1);
+    firstframes = ifs.firstframes.(code2);
+    oc1 = im2double(squeeze(ocs.lastframes.(code1)));
+    oc2 = im2double(squeeze(ocs.firstframes.(code2)));
     ocsift1 = mexDenseSIFT(oc1,cellsize,gridspacing);
     ocsift2 = mexDenseSIFT(oc2,cellsize,gridspacing);
     [ocvx,ocvy,ocenergylist]=SIFTflowc2f(ocsift1, ocsift2,SIFTflowpara);
     ocFlowAvg = mean(mean(ocvx))^2 + mean(mean(ocvy))^2;
-    pairwiseMeans.(codei).ocFlow = ocFlowAvg;
-    for gi1=[1:guesses]
-        guessi1code = sprintf('guess%03d',gi1);
-        guessi1 = im2double(squeeze(lastframes(gi1,:,:,:,:)));
-        sifti = mexDenseSIFT(guessi1,cellsize,gridspacing);
-        for gi2=[1:guesses]
-            guessi2code = sprintf('guess%03d',gi2);
-            guessi1 = im2double(squeeze(firstframes(gi2,:,:,:,:)));
-            sifti2 = mexDenseSIFT(guessi1,cellsize,gridspacing);
+    pairwiseMeans.(code1).ocFlow = ocFlowAvg;
+    for g1=[1:guesses]
+        guess1code = sprintf('guess%03d',g1);
+        guess1 = im2double(squeeze(lastframes(g1,:,:,:,:)));
+        sifti = mexDenseSIFT(guess1,cellsize,gridspacing);
+        for g2=[1:guesses]
+            guess2code = sprintf('guess%03d',g2);
+            guess1 = im2double(squeeze(firstframes(g2,:,:,:,:)));
+            sifti2 = mexDenseSIFT(guess1,cellsize,gridspacing);
             [vx,vy,energylist]=SIFTflowc2f(sifti,sifti2,SIFTflowpara);
             flowAvg = mean(mean(vx))^2 + mean(mean(vy))^2;
-            pairwiseMeans.(codei).(guessi1code).(guessi2code) = flowAvg;
-            pairwiseMeansMat(i,gi1,gi2) = flowAvg;
+            pairwiseMeans.(code1).(guess1code).(guess2code) = flowAvg;
+            pairwiseMeansMat(i,g1,g2) = flowAvg;
         end
     end
 end
@@ -75,14 +75,14 @@ clips(1) = find(pairwiseMeansMat(2,clips(2),:)==min(totalFlowCost(2,:)));
 bigClipStack = zeros(n,2,128,128,3);
 for i=[1:n]
     timecode = sprintf('data%03d',i);
-    desiredClip = clips(i);
+    clipId = clips(i);
     ffStack = ifs.firstframes.(timecode);
     lfStack = ifs.lastframes.(timecode);
-    bigClipStack(i,1,:,:,:) = squeeze(ffStack(desiredClip,:,:,:,:));
-    bigClipStack(i,2,:,:,:) = squeeze(lfStack(desiredClip,:,:,:,:));
+    bigClipStack(i,1,:,:,:) = squeeze(ffStack(clipId,:,:,:,:));
+    bigClipStack(i,2,:,:,:) = squeeze(lfStack(clipId,:,:,:,:));
 end
 
 for clip=[1:n]
-    figure((clip-1)*2+1);imshow(squeeze(bigClipStack(clip,1,:,:,:)));
-    figure((clip-1)*2+2);imshow(squeeze(bigClipStack(clip,2,:,:,:)));
+    figure((clip-1)*2+1);imshow(squeeze(bigClipStack(clip,1,:,:,:))/255);
+    figure((clip-1)*2+2);imshow(squeeze(bigClipStack(clip,2,:,:,:))/255);
 end
