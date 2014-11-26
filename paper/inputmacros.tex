@@ -1,0 +1,40 @@
+%!TEX root = brainreader.tex
+
+%use these commands while writing
+\newcommand {\valkyrie}[1]{{\bf{VS: #1}\normalfont}}
+\newcommand {\natalia}[1]{{\bf{NB: #1}\normalfont}}
+%\newcommand {\changes}[1]{{\color{changes}{#1}\normalfont}}
+\newcommand {\changes}[1]{{#1}}
+
+%uncomment these for final submit
+%\renewcommand {\valkyrie}[1]{}
+%\renewcommand {\natalia}[1]{}
+
+\newcommand{\noopsort}[2]{#2}
+
+\newcommand {\bt}[1]{\textbf{#1} \normalfont}
+\newcommand{\squishlist}{
+ \begin{list}{$\bullet$}
+  { \setlength{\itemsep}{0pt}
+     \setlength{\parsep}{3pt}
+     \setlength{\topsep}{3pt}
+     \setlength{\partopsep}{0pt}
+     \setlength{\leftmargin}{1.5em}
+     \setlength{\labelwidth}{1em}
+     \setlength{\labelsep}{0.5em} } }
+\newcommand{\squishend}{
+  \end{list}  }
+
+\newenvironment{packed_enum}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+\newenvironment{packed_desc}{
+\begin{description}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{description}}

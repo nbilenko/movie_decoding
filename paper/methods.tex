@@ -1,0 +1,20 @@
+%!TEX root = brainreader.tex
+
+\section{Methods}
+
+Our processing pipeline takes as input two pieces of data for each second:
+
+\begin{itemize}
+\item The original clip stimulus presented to the subject
+\item The top 100 guesses (based on fMRI data) and their rankings
+\end{itemize}
+
+We first perform HOG feature extraction on both pieces of data and reject guesses whose HOG data does not match well with the original clip \valkyrie{need to add something about how this is actually physically-based in the fMRI data... we should also look at how well the HOG features actually correlate to rankings.  I'd assume we basically will be picking the top guesses, but I don't know.}.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  \valkyrie{Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.}
+
+\subsection{HOG Features}
+
+Histogram of Oriented Gradients (HOG) features roughly indicate edges in an image as well as the orientation of those edges.  We use HOG features to ensure good \emph{spatial} alignment of guess footage with the presented clip.
+
+\subsection{SIFT Features}
+
+Scale-Invariant Feature Transform (SIFT) features, often used in image recognition tasks, can give higher-level information about the contents of a scene.  We use SIFT Flow \valkyrie{citation needed} to 

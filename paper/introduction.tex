@@ -1,0 +1,8 @@
+%!TEX root = brainreader.tex
+
+\section{Introduction}
+\IEEEPARstart{F}{unctional} magnetic resonance imaging, or fMRI, data can shed light on what individuals are looking at.  Specific areas in the brain are known to react strongly to particular line orientations and locations.  Using activation data from these centers, such fMRI data can ``reconstruct'' what an individual is seeing.
+
+The Gallant lab from UC Berkeley has worked on this problem previously, demonstrating \valkyrie{citation needed} that they can perform this reconstruction by averaging images from a training set.  The top 100 images whose recorded fMRI profiles match most closely with the recorded data are simply stacked on top of each other to create output videos.
+
+However, this type of visualization is very ``messy'': while the quantified fMRI matches are quite strong, the visual output video stacks are misleadingly inaccurate.  Using computational techniques, we improve the quality of these output videos.
