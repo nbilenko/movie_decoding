@@ -151,14 +151,14 @@ if MORPH
             for frame=[1:8]
                 curFrame = squeeze(bigClipStack(i,frame,:,:,:));
                 morphFrame = squeeze(bigClipStack(i-1,16-frame,:,:,:));
-                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,frame/8);
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,frame/8,cellsize,gridspacing,SIFTflowpara);
             end
         end
         if(ts < timesteps - 1)
             for frame=[8:15]
                 curFrame = squeeze(bigClipStack(i,frame,:,:,:));
                 morphFrame = squeeze(bigClipStack(i+1,16-frame,:,:,:));
-                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,(16-frame)/8);
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,(16-frame)/8,cellsize,gridspacing,SIFTflowpara);
             end
         end
     end
