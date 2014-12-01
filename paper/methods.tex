@@ -9,12 +9,23 @@ Our processing pipeline takes as input two pieces of data for each second:
 \item The top 100 guesses (based on fMRI data) and their rankings
 \end{itemize}
 
-We first perform HOG feature extraction on both pieces of data and reject guesses whose HOG data does not match well with the original clip \valkyrie{need to add something about how this is actually physically-based in the fMRI data... we should also look at how well the HOG features actually correlate to rankings.  I'd assume we basically will be picking the top guesses, but I don't know.}.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  \valkyrie{Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.}
+We first perform HOG feature extraction on both pieces of data and reject guesses whose HOG data does not match well with the original clip.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  \valkyrie{Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.}
 
-\subsection{HOG Features}
+Clips (both original and guessed) are 1 second in length, and have 15 frames per second.  We do not have data on whether there are scene breaks within a 1 second clip.  
+
+\subsection{Pruning - HOG Features}
 
 Histogram of Oriented Gradients (HOG) features roughly indicate edges in an image as well as the orientation of those edges.  We use HOG features to ensure good \emph{spatial} alignment of guess footage with the presented clip.
 
-\subsection{SIFT Features}
+We calculate the HOG features of each frame of each clip and perform an SSD with the ground truth clip's HOG features at that time step.  This process is physically based in the fMRI data, as the visual processing centers of the brain react in specific ways to edges presented in particular orientations and in particular locations across the visual field.  Thus we see this ``pruning'' step as non-essential, as we would expect that the fMRI data and subsequent ranking step (performed prior to our getting the data) is already based on these features.   \valkyrie{We should look at how well the HOG features actually correlate to rankings.  I assume we basically pick the top guesses, but I don't know.}
 
-Scale-Invariant Feature Transform (SIFT) features, often used in image recognition tasks, can give higher-level information about the contents of a scene.  We use SIFT Flow \valkyrie{citation needed} to 
+After finding the SSD of the HOG features through each clip when compared to the original source clip, we throw away \valkyrie{what exactly do we throw away?}.
+
+\subsection{Consistency - SIFT Features}
+
+Scale-Invariant Feature Transform (SIFT) features, often used in image recognition tasks, can give higher-level information about the contents of a scene.  We want to minimize the key point flow (i.e., scene composition) between the last frame of one clip and the first frame of the next clip.  SIFT keypoints have been used for nearest-neighbor database searches (e.g., in the SIFT flow paper), and can successfully extract, for example, a street image to match a street image, even when the \emph{optical} flow between the two street images is large.  We use this to keep a thematically consistent scene across timesteps.
+
+We use SIFT flow to calculate costs for transitioning between one clip and the next.  We simply calculate the SIFT flow between the last frame of one clip and the first frame of all potential next clips.  We then use cost back-propagation, i.e., dynamic programming, to find the lowest semantic cost path through all the clips remaining after HOG pruning.
+
+\subsection{Visuals - Image morphing}
+
