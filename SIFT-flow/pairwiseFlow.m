@@ -17,6 +17,9 @@ SIFTflowpara.nIterations= 30;
 
 SSD = false;
 HOG = true;
+MORPH = false;
+SAVE_GIF = true;
+SHOW_FIRST_AND_LAST_FRAMES = true;
 
 timesteps = 3;
 chooseFromHOG = 5;
@@ -128,16 +131,65 @@ for i=[1:timesteps]
     bigClipStack(i,2,:,:,:) = squeeze(lfStack(clipId,:,:,:,:));
 end
 
-started = false;
-fname = 'out.gif';
+if MORPH
+    % we now have a big clip stack.  we want to take the 8th frame (halfway
+    % through) from each clip and morph the SIFT keypoints between it and the
+    % previous and following clips, in APPEARANCE ONLY.
+
+    % this means that we need to take the SIFT keypoints and find
+    % correspondences, then triangulate, then morph.  fortunately, I believe we
+    % can do this using the functions that came with the SIFT flow code!
+
+    % the SIFT warping thing is probably going to be our friend here.  so what
+    % we will have are a bunch of frames:
+    % a8 a9 a10 a11 a12 a13 a14 a15 ... b1 b2 b3 b4 b5 b6 b7 b8
+    % and the way we want to match them up is... a8 shape + b8 partial
+    % appearance, a9 shape + b7 partial appearance, a10 shape + b6 partial
+    % appearance, &c.?  or is there something else that we want to do..?    
+    for ts=[1:timesteps]
+        if(ts > 1)
+            for frame=[1:8]
+                curFrame = squeeze(bigClipStack(i,frame,:,:,:));
+                morphFrame = squeeze(bigClipStack(i-1,16-frame,:,:,:));
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,frame/8);
+            end
+        end
+        if(ts < timesteps - 1)
+            for frame=[8:15]
+                curFrame = squeeze(bigClipStack(i,frame,:,:,:));
+                morphFrame = squeeze(bigClipStack(i+1,16-frame,:,:,:));
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,(16-frame)/8);
+            end
+        end
+    end
+end
+
+
+
+if SAVE_GIF
+    fname = 'out.gif';
+    firstFrame = zeros(squeeze(bigClipStack(clip,1,:,:,:)));
+    [A,map] = rgb2ind(firstFrame,256); 
+    imwrite(A,map,fname,'gif','LoopCount',Inf,'DelayTime',1/15);
+end
+
 for clip=[1:timesteps]
     code = sprintf('data%03d',clip);
-    figure((clip-1)*4+1);imshow(squeeze(ocs.firstframes.(code)));
-    title(sprintf('original clip first frame ts %d',clip));
-    figure((clip-1)*4+2);imshow(squeeze(ocs.lastframes.(code)));
-    title(sprintf('original clip last frame ts %d',clip));
-    figure((clip-1)*4+3);imshow(squeeze(bigClipStack(clip,1,:,:,:))/255);
-    title(sprintf('best guess first frame ts %d',clip));
-    figure((clip-1)*4+4);imshow(squeeze(bigClipStack(clip,2,:,:,:))/255);
-    title(sprintf('best guess last frame ts %d',clip));
+    if SHOW_FIRST_AND_LAST_FRAMES
+        figure((clip-1)*4+1);imshow(squeeze(ocs.firstframes.(code)));
+        title(sprintf('original clip first frame ts %d',clip));
+        figure((clip-1)*4+2);imshow(squeeze(ocs.lastframes.(code)));
+        title(sprintf('original clip last frame ts %d',clip));
+        figure((clip-1)*4+3);imshow(squeeze(bigClipStack(clip,1,:,:,:))/255);
+        title(sprintf('best guess first frame ts %d',clip));
+        figure((clip-1)*4+4);imshow(squeeze(bigClipStack(clip,2,:,:,:))/255);
+        title(sprintf('best guess last frame ts %d',clip));
+    end
+    if SAVE_GIF
+        for frame=[1:15]
+            fr = bigClipStack(clip,frame,:,:,:);
+            [A,map] = rgb2ind(fr,256); 
+            imwrite(A,map,fname,'gif','WriteMode','append','DelayTime',1/15);
+        end
+    end
 end

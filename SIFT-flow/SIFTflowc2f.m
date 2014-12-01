@@ -69,8 +69,6 @@ end
 for i=2:nlevels
     pyrd(i).im1=imresize(imfilter(pyrd(i-1).im1,fspecial('gaussian',5,0.67),'same','replicate'),0.5,'bicubic');
     pyrd(i).im2=imresize(imfilter(pyrd(i-1).im2,fspecial('gaussian',5,0.67),'same','replicate'),0.5,'bicubic');
-%     pyrd(i).im1 = reduceImage(pyrd(i-1).im1);
-%     pyrd(i).im2 = reduceImage(pyrd(i-1).im2);
     if IsSegmentation
         pyrd(i).seg=imresize(pyrd(i-1).seg,0.5,'nearest');
     end
@@ -95,19 +93,12 @@ for i=nlevels:-1:1
     [xx,yy]=meshgrid(1:width,1:height);
     
     if i==nlevels
-%         vx=zeros(height,width);
-%         vy=vx;
         vx=pyrd(i).xx;
         vy=pyrd(i).yy;
         
         winSizeX=ones(height,width)*topwsize;
         winSizeY=ones(height,width)*topwsize;
     else
-%         vx=imresize(vx-pyrd(i+1).xx,[height,width],'bicubic')*2+pyrd(i).xx;
-%         vy=imresize(vy-pyrd(i+1).yy,[height,width],'bicubic')*2+pyrd(i).yy;
-        
-%         winSizeX=decideWinSize(vx,wsize);
-%         winSizeY=decideWinSize(vy,wsize);
         vx=round(pyrd(i).xx+imresize(vx-pyrd(i+1).xx,[height,width],'bicubic')*2);
         vy=round(pyrd(i).yy+imresize(vy-pyrd(i+1).yy,[height,width],'bicubic')*2);
         
@@ -134,26 +125,13 @@ for i=nlevels:-1:1
             [flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nTopIterations,2,topwsize],vx,vy,winSizeX,winSizeY,Im_s,Im_d);
         else
             [flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nTopIterations,2,topwsize],vx,vy,winSizeX,winSizeY);
-            %[flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nTopIterations,0,topwsize],vx,vy,winSizeX,winSizeY);
         end
-%         [flow1,foo1]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterationArray(i),0,topwsize],vx,vy,winSizeX,winSizeY);
-%         [flow2,foo2]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nTopIterations,2,topwsize],vx,vy,winSizeX,winSizeY);
-%         if foo1(end)<foo2(end)
-%             flow=flow1;
-%             foo=foo1;
-%         else
-%             flow=flow2;
-%             foo=foo2;
-%         end
     else
-        %[flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterations,nlevels-i,wsize],vx,vy,winSizeX,winSizeY);
         if IsSegmentation
             [flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterationArray(i),nlevels-i,wsize],vx,vy,winSizeX,winSizeY,Im_s,Im_d);
         else
             [flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterationArray(i),nlevels-i,wsize],vx,vy,winSizeX,winSizeY);
-            %[flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterationArray(i),0,wsize],vx,vy,winSizeX,winSizeY);
         end
-%         [flow,foo]=mexDiscreteFlow(Im1,Im2,[alpha,d,gamma*2^(i-1),nIterationArray(i),0,wsize],vx,vy,winSizeX,winSizeY);
     end
     energylist(i).data=foo;
     vx=flow(:,:,1);

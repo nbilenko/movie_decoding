@@ -1,5 +1,5 @@
-im1=imread('strip-1.jpg');
-im2=imread('strip-2.jpg');
+im1=squeeze(imread('fire-1.jpg'));
+im2=squeeze(imread('fire-2.jpg'));
 
 im1=imresize(imfilter(im1,fspecial('gaussian',7,1.),'same','replicate'),0.5,'bicubic');
 im2=imresize(imfilter(im2,fspecial('gaussian',7,1.),'same','replicate'),0.5,'bicubic');
