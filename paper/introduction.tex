@@ -20,10 +20,10 @@ Instead of a simple averaging process for turning guesses into an output video, 
 
 \begin{figure}[t]
 \centering
-    \includegraphics[width=1.0\columnwidth]{figures/average.png}
-\caption{Using a weighted average improves over the na\"{i}ve average seen in Figure \ref{fig:avg}a. \valkyrie{obviously we need this image as well.}}
+    \includegraphics[width=1.0\columnwidth]{figures/orig-avg-weighted.png}
+\caption{Using a weighted average improves over the na\"{i}ve average.  Left: original clip presented.  Center: na\"{i}ve average.  Right: weighted average.}
 \label{fig:weighted}
 \end{figure}
 
 
-After using weighted averaging, we turned to even more sophisticated techniques: HOG feature alignment and SIFT flow.  These give us additional information on the edges makeup and semantic scene composition of both the original clip and the top 100 guesses as predicted by the original fMRI-based system.
+After using weighted averaging, we turned to even more sophisticated techniques: HOG feature alignment and SIFT flow.  These give us additional information on the edges makeup and semantic scene composition of both the original clip and the top 100 guesses as predicted by the original fMRI-based system.  We perform three steps to create our visualization from these ranked guesses: pruning, consistency-assurance, and visual morphing.

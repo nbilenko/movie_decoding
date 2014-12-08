@@ -7,6 +7,7 @@ Our processing pipeline takes as input two pieces of data for each second:
 \begin{itemize}
 \item The original clip stimulus presented to the subject
 \item The top 100 guesses (based on fMRI data) and their rankings
+\item The log-likelihood (LLH) of each guess clip based on the fMRI data
 \end{itemize}
 
 We first perform HOG feature extraction on both pieces of data and reject guesses whose HOG data does not match well with the original clip.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  \valkyrie{Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.}
@@ -29,3 +30,6 @@ We use SIFT flow to calculate costs for transitioning between one clip and the n
 
 \subsection{Visuals - Image morphing}
 
+To make our output visuals more consistent, we introduce an aspect of warping between the final selected clips.  This warping is intended to preserve object motion and position across clip boundaries: for example, a person walking in one clip should not jump to a new location in the next clip, and she should not drastically change in appearance at the clip boundary.  In addition, we are also confined to the space of clips already selected, and we do not add any new or extended clips to improve overlap information.
+
+This step also uses SIFT flow.  We c
