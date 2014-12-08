@@ -28,6 +28,7 @@ minMode = 'diff';
 
 [ifs,ocs] = loadData(timesteps);
 
+%% HOG
 if HOG
     % do some HOG matching on the first and last frames
     for i=[1:timesteps]
@@ -62,6 +63,7 @@ if SSD
     end
 end
 
+%% SIFT
 SIFTguesses = size(ifs.firstframes.data001,1);
 pairwiseMeans = struct;
 pairwiseMeansMat = zeros(timesteps,SIFTguesses,SIFTguesses);
@@ -99,6 +101,7 @@ for i=[2:timesteps]
     end
 end
 
+%% pathfinding
 % use dynamic programming to find the cheapest path through the possible
 % frames (right now we don't weight based on the llh of the guess, but we could)
 totalFlowCost = zeros(timesteps,SIFTguesses);
@@ -131,6 +134,7 @@ for i=[1:timesteps]
     bigClipStack(i,2,:,:,:) = squeeze(lfStack(clipId,:,:,:,:));
 end
 
+%% morph
 if MORPH
     % we now have a big clip stack.  we want to take the 8th frame (halfway
     % through) from each clip and morph the SIFT keypoints between it and the
@@ -145,27 +149,39 @@ if MORPH
     % a8 a9 a10 a11 a12 a13 a14 a15 ... b1 b2 b3 b4 b5 b6 b7 b8
     % and the way we want to match them up is... a8 shape + b8 partial
     % appearance, a9 shape + b7 partial appearance, a10 shape + b6 partial
-    % appearance, &c.?  or is there something else that we want to do..?    
+    % appearance, &c.?  or is there something else that we want to do..?   
+    
+    % idea! need to flesh this out more.  find the vx,vy offset vectors to
+    % get from the final clip in this sequence to the initial clip in the
+    % next sequence, then gradually warp by the current vxvy + a fraction
+    % of THAT.  this means that "objects" should stay in the same place
+    % over the clip transition!  DANG, YO
     for ts=[1:timesteps]
         if(ts > 1)
             for frame=[1:8]
                 curFrame = squeeze(bigClipStack(i,frame,:,:,:));
                 morphFrame = squeeze(bigClipStack(i-1,16-frame,:,:,:));
-                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,frame/8,cellsize,gridspacing,SIFTflowpara);
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,0,0,frame/8,cellsize,gridspacing,SIFTflowpara);
             end
         end
         if(ts < timesteps - 1)
+            finalFrame = squeeze(bigClipStack(i,15,:,:,:));
+            initialFrame = squeeze(bigClipStack(i+1,1,:,:,:));
+            ffSIFT = mexDenseSIFT(finalFrame,cellsize,gridspacing);
+            ifSIFT = mexDenseSIFT(initialFrame,cellsize,gridspacing);
+            [fvx,fvy,~] = SIFTflowc2f(ffSIFT,ifSIFT,SIFTflowpara);
+
             for frame=[8:15]
                 curFrame = squeeze(bigClipStack(i,frame,:,:,:));
                 morphFrame = squeeze(bigClipStack(i+1,16-frame,:,:,:));
-                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,(16-frame)/8,cellsize,gridspacing,SIFTflowpara);
+                bigClipStack(i,frame,:,:,:) = SIFTMorphFrames(curFrame,morphFrame,fvx,fvy,(16-frame)/8,cellsize,gridspacing,SIFTflowpara);
             end
         end
     end
 end
 
 
-
+%% output
 if SAVE_GIF
     fname = 'out.gif';
     firstFrame = zeros(squeeze(bigClipStack(clip,1,:,:,:)));
