@@ -49,9 +49,9 @@ disp('done');
 
 if opts.morph
 	data = morphFrames(data, opts);
-	makeGIF(data, '../morph.gif');
+	makeMorphGIF(data, '../morph.gif');
 end
 
 if opts.gif
-	makeGIF(data, '../guess.gif');
+	makeGuessGIF(data, '../guess.gif');
 end
