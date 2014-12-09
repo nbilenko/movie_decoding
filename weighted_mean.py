@@ -2,17 +2,23 @@
 from utils import *
 import matplotlib.pyplot as plt
 
-datapath = "../data/data%03d.hf5"
-clipnums = range(1, 487)
-weighted_means = []
-clips = []
+datapath = "./data/data%03d.hf5"
 
-for clipnum in clipnums:
-	data = load_table_file(datapath % clipnum)
-	llh = data["llh"].squeeze()[:100]; clip = data["clip"]; guesses = data["guesses"]
-	weights = rescale(llh[0]/llh)
-	weighted_means.append(np.average(guesses, 0, weights))
-	clips.append(clip)
+for block in range(10):
+	if block == 9:
+		clipnums = range(block*50+1, 487)
+	else:
+		clipnums = range(block*50+1, (block+1)*50+1)
+	weighted_means = []
+	means = []
+	clips = []
 
-save_table_file("../data/weighted_means.hf5", {"clips": np.array(clips), "guesses": np.array(weighted_means)})
+	for clipnum in clipnums:
+		data = load_table_file(datapath % clipnum)
+		weighted_means.append(np.average(data["guesses"][:100], 0, rescale(data["llh"].squeeze()[:100][0]/data["llh"].squeeze()[:100])))
+		means.append(data["guesses"][:100].mean(0))
+		clips.append(data["clip"])
+		del data
+
+	save_table_file("./data/weighted_means%d.hf5" % block, {"clips": np.array(clips), "guess": np.array(means), "weighted_guess": np.array(weighted_means)})
 

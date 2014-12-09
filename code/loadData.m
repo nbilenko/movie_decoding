@@ -7,6 +7,7 @@ function data = loadData(opts)
 
     data.guesses = zeros(opts.nT, opts.nG, nframes, opts.imsize(1), opts.imsize(2), opts.imsize(3));
     data.ocs = zeros(opts.nT, nframes, opts.imsize(1), opts.imsize(2), opts.imsize(3));
+    data.llh = zeros(opts.nT, opts.nG);
 
     for i=[opts.firstclip:opts.firstclip-1+opts.nT]
         code = sprintf('data%03d',i);
@@ -18,6 +19,9 @@ function data = loadData(opts)
         guessez = permute(guessez, [5 4 3 2 1]);
         clipz = h5read(floc,'/clip');
         clipz = permute(clipz, [4 3 2 1]);
+        llh = h5read(floc, '/llh');
+        llh = llh(1:100, 1);
+        data.llh(i-opts.firstclip+1, :) = (llh-min(llh))/(max(llh) - min(llh));
 
         if opts.firstlast
             data.guesses(i-opts.firstclip+1, :, 1, :, :, :) = squeeze(guessez(1:opts.nG, 1, :, :, :));
