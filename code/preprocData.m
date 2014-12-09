@@ -21,6 +21,8 @@ function data = preprocData(data, opts)
 					guessDist = HOG(squeeze(frames1(frame, :, :, :)), squeeze(frames2(frame, :, :, :)));
 				elseif strcmp(opts.preproc, 'ssd')
 					guessDist = SSD(squeeze(frames1(frame, :, :, :)), squeeze(frames2(frame, :, :, :)));
+				elseif strcmp(opts.preproc, 'none')
+					guessDist = 0;
 				else
 					disp('Preprocessing undefined for specified opts.preproc')
 				end
