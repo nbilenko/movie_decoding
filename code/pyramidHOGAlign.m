@@ -1,14 +1,21 @@
-function [alignt,bestX,bestY] = pyramidAlign(thisImg, toThisImg, shiftRange)
+function alignt = pyramidHOGAlign(theesImg, toTheesImg)
+
+    function score = scoreAlignment(dis, dat)
+        dis = extractHOGFeatures(dis);
+        dat = extractHOGFeatures(dat);
+        [~,sz] = size(dis);
+        score = 1-(sum((dis-dat).^2)/sz);
+    end
 
     function [bestX,bestY] = pyrAlign(thisImg, toThisImg, resizeFactor)
         reduceFactor = 2.0;
-        smallestDim = 200;
+        smallestDim = 25;
 
         resizedThis = imresize(thisImg, resizeFactor);
         resizedTo = imresize(toThisImg, resizeFactor);
-        % we don't want to deal with too few pixels... let's say... 200x200?
-        [x,y] = size(resizedThis);
-        if x < smallestDim || y < smallestDim
+        % we don't want to deal with too few pixels... let's say... 25x25?
+        [xsz,ysz] = size(resizedThis);
+        if xsz < smallestDim || ysz < smallestDim
             bestX = 0;
             bestY = 0;
             return;
@@ -17,8 +24,8 @@ function [alignt,bestX,bestY] = pyramidAlign(thisImg, toThisImg, shiftRange)
         aroundX = smallerX*reduceFactor;
         aroundY = smallerY*reduceFactor;
         bestScore = 0.0;
-        for x = aroundX-(1/reduceFactor):aroundX+(1/reduceFactor)
-            for y = aroundY-(1/reduceFactor):aroundY+(1/reduceFactor)
+        for x = aroundX-1:aroundX+1
+            for y = aroundY-1:aroundY+1
                 shifted = circshift(resizedThis,[x,y]);
                 score = scoreAlignment(shifted, resizedTo);
                 if score > bestScore
@@ -30,7 +37,7 @@ function [alignt,bestX,bestY] = pyramidAlign(thisImg, toThisImg, shiftRange)
         end
     end
 
-[bestX,bestY] = pyrAlign(thisImg, toThisImg, 1.0);
-disp([bestX,bestY]);
-alignt = circshift(thisImg,[bestX,bestY]);
+    fullSize = 1.0;
+    [bestX,bestY] = pyrAlign(theesImg, toTheesImg, fullSize);
+    alignt = circshift(theesImg,[bestX,bestY]);
 end

@@ -20,12 +20,12 @@ function data = loadData(opts)
         clipz = permute(clipz, [4 3 2 1]);
 
         if opts.firstlast
-            data.guesses(i-opts.firstclip+1, :, 1, :, :, :) = squeeze(guessez(:, 1, :, :, :));
-            data.guesses(i-opts.firstclip+1, :, 2, :, :, :) = squeeze(guessez(:, opts.nframes, :, :, :));
+            data.guesses(i-opts.firstclip+1, :, 1, :, :, :) = squeeze(guessez(1:opts.nG, 1, :, :, :));
+            data.guesses(i-opts.firstclip+1, :, 2, :, :, :) = squeeze(guessez(1:opts.nG, opts.nframes, :, :, :));
             data.ocs(i-opts.firstclip+1, 1, :, :, :) = squeeze(clipz(1, :, :, :));
             data.ocs(i-opts.firstclip+1, 2, :, :, :) = squeeze(clipz(opts.nframes, :, :, :));
         else
-            data.guesses(i-opts.firstclip+1, :, :, :, :, :) = guessez;
+            data.guesses(i-opts.firstclip+1, :, :, :, :, :) = guessez(1:opts.nG,:,:,:,:);
             data.ocs(i-opts.firstclip+1, :, :, :, :) = clipz;
         end
     end
