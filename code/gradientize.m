@@ -17,7 +17,8 @@ function data = gradientize(data,opts)
     for timepoint=1:opts.nT
         for guess=1:opts.nG
             for frame=1:opts.nframes
-                data.guesses(timepoint, guess, frame, :, :, :) = doGradient(data.guesses(timepoint, guess, frame, :, :, :),opts.invert);
+                 gradiented = doGradient(squeeze(data.guesses(timepoint, guess, frame, :, :, :)),opts.inverseGradient);
+                 data.guesses(timepoint, guess, frame, :, :, :) = gradiented * opts.bumpUpGradient;
             end
         end
     end

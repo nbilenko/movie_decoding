@@ -1,4 +1,4 @@
-function makeMorphGIF(data, fname)
+function makeMorphGIF(data, opts, fname)
 	firstFrame = squeeze(data.morphs(1, 1, :, :, :))/255;
 	[A,map] = rgb2ind(firstFrame,256); 
 	imwrite(A,map,fname,'gif','LoopCount',Inf,'DelayTime',1/15);
