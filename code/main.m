@@ -10,17 +10,20 @@ opts = defineSIFTPara(opts);
 opts.dataFolder = '../data/';
 opts.imsize = [128, 128, 3]; % frame size
 opts.nT = 3; % number of timepoints
-opts.nG = 100; % number of guesses loaded
+opts.nG = 5; % number of guesses loaded
 opts.nframes = 15; % number of frames per timepoint
-opts.nGchosen = 100; % number of guesses chosen in preprocessing
+opts.nGchosen = 5; % number of guesses chosen in preprocessing
 opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
 opts.forceAlign = true;
 opts.minimize = 'prev'; % metric to minimize ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
+opts.nGPath = 5; % how many guesses are selected to be a part of the "path" thru the clips
 opts.morph = false; % morph the clips using SIFT-flow?
 opts.gif = true; % create gif at the end? If false, plots the first and last frames
 opts.gtruth = false; % compare HOG to ground truth? (thinking this may not really be a good thing to do after all...)
 opts.firstlast = false; % use first and last frames only or all frames?
 opts.firstclip = 14; % what clip to start with?
+opts.gradient = true; % visualize in gradient domain? if false, use values.
+opts.inverseGradient = false; % true: white on black. false: black on white.
 
 % Load data
 disp('loading data...');
@@ -46,6 +49,13 @@ disp('done');
 disp('ordering clips...');
 data = findPath(data, opts);
 disp('done');
+
+% move clips into the gradient domain for better visualization
+if opts.gradient
+    disp('converting to gradient domain...');
+    data = gradientize(data,opts);
+    disp('done');
+end
 
 if opts.morph
 	data = morphFrames(data, opts);

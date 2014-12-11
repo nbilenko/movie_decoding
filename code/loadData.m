@@ -20,7 +20,7 @@ function data = loadData(opts)
         clipz = h5read(floc,'/clip');
         clipz = permute(clipz, [4 3 2 1]);
         llh = h5read(floc, '/llh');
-        llh = llh(1:100, 1);
+        llh = llh(1:opts.nG, 1);
         data.llh(i-opts.firstclip+1, :) = (llh-min(llh))/(max(llh) - min(llh));
 
         if opts.firstlast

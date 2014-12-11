@@ -1,10 +1,8 @@
-function alignt = pyramidHOGAlign(theesImg, toTheesImg)
+function alignt = pyramidAlign(theesImg, toTheesImg)
 
     function score = scoreAlignment(dis, dat)
-        dis = extractHOGFeatures(dis);
-        dat = extractHOGFeatures(dat);
-        [~,sz] = size(dis);
-        score = 1-(sum((dis-dat).^2)/sz);
+        [xsz,ysz,csz] = size(dis);
+        score = 1-(sum(sum(sum((dis-dat).^2)))/(xsz*ysz*csz));
     end
 
     function [bestX,bestY] = pyrAlign(thisImg, toThisImg, resizeFactor)
@@ -38,6 +36,10 @@ function alignt = pyramidHOGAlign(theesImg, toTheesImg)
     end
 
     fullSize = 1.0;
-    [bestX,bestY] = pyrAlign(theesImg, toTheesImg, fullSize);
+    % we'll use one level of laplacian for it
+    gaussian = fspecial('gaussian',[15,15],5);
+    theesEdgeImg  = (theesImg-imfilter(theesImg,gaussian,'replicate'))/255;
+    toTheesEdgeImg  = (toTheesImg-imfilter(toTheesImg,gaussian,'replicate'))/255;
+    [bestX,bestY] = pyrAlign(theesEdgeImg, toTheesEdgeImg, fullSize);
     alignt = circshift(theesImg,[bestX,bestY]);
 end

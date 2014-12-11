@@ -10,7 +10,7 @@ function data = forceAlignData(data, opts)
             alignTo = im2double(squeeze(data.guesses(timepoint, 1, frame, :, :, :)));
             for guess=2:opts.nG
                 align = im2double(squeeze(data.guesses(timepoint, guess, frame, :, :, :)));
-                alignt = pyramidHOGAlign(align, alignTo);
+                alignt = pyramidAlign(align, alignTo);
                 data.guesses(timepoint, guess, frame, :, :, :) = alignt;
             end
         end
