@@ -5,22 +5,19 @@
 Our processing pipeline takes as input two pieces of data for each second:
 
 \begin{itemize}
-\item The original clip stimulus presented to the subject
-\item The top 100 guesses (based on fMRI data) and their rankings
-\item The log-likelihood (LLH) of each guess clip based on the fMRI data
+\item The top 100 guesses (based on fMRI data) - each guess has 15 frames
+\item The log-likelihood (LLH) of each guess
 \end{itemize}
 
-We first perform HOG feature extraction on both pieces of data and reject guesses whose HOG data does not match well with the original clip.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  \valkyrie{Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.}
+We first forcibly align clips using pyramid-based HOG.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.
 
 Clips (both original and guessed) are 1 second in length, and have 15 frames per second.  We do not have data on whether there are scene breaks within a 1 second clip.  
 
-\subsection{Pruning - HOG Features}
+\subsection{Alignment - HOG Features}
 
-Histogram of Oriented Gradients (HOG) features roughly indicate edges in an image as well as the orientation of those edges.  We use HOG features to ensure good \emph{spatial} alignment of guess footage with the presented clip.
+Histogram of Oriented Gradients (HOG) features roughly indicate edges in an image as well as the orientation of those edges.  We use HOG features to ensure good spatial alignment of guess footage, which results in a nicer-looking average appearance.
 
-We calculate the HOG features of each frame of each clip and perform an SSD with the ground truth clip's HOG features at that time step.  This process is physically based in the fMRI data, as the visual processing centers of the brain react in specific ways to edges presented in particular orientations and in particular locations across the visual field.  Thus we see this ``pruning'' step as non-essential, as we would expect that the fMRI data and subsequent ranking step (performed prior to our getting the data) is already based on these features.   \valkyrie{We should look at how well the HOG features actually correlate to rankings.  I assume we basically pick the top guesses, but I don't know.}
-
-After finding the SSD of the HOG features through each clip when compared to the original source clip, we throw away \valkyrie{what exactly do we throw away?}.
+We calculate the HOG features of the highest-ranked clip, then, using gaussian pyramids, we shift all other guess clips around to minimize the SSD between their HOG features and those of the highest-ranked clip.  This process is physically based in the fMRI data, as the visual processing centers of the brain react in specific ways to edges presented in particular orientations and in particular locations across the visual field.  Thus we see this ``pruning'' step as non-essential, as we would expect that the fMRI data and subsequent ranking step (performed prior to our getting the data) is already based on these features.
 
 \subsection{Consistency - SIFT Features}
 

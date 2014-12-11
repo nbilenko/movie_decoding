@@ -25,11 +25,7 @@ function data = findPath(data, opts)
         end
     end
     
-    cpPairwiseMeans = data.pairwiseMeans;
     % for the first clip, we need to return to our info from pairwiseMeansMat
-    for i=[1:opts.nGPath]
-        matchingClips = find(cpPairwiseMeans(2,data.cliporder(2,i),:)==min(totalFlowCost(2,:)));
-        data.cliporder(1,i) = matchingClips(1);
-        cpPairwiseMeans(2,data.cliporder(2,i),matchingClips(1)) = REALBIG;
-    end
+    matchingClips = find(data.pairwiseMeans(2,data.cliporder(2,1),:)==min(totalFlowCost(2,:)));
+    data.cliporder(1,:) = matchingClips(1:opts.nGPath);
 end

@@ -1,5 +1,5 @@
 function makeGuessGIF(data, opts, fname)
-	firstFrame = squeeze(data.guesses(1, data.cliporder(1), 1, :, :, :))/255;
+	firstFrame = squeeze(sum(squeeze(data.guesses(1, data.cliporder(1,:), 1, :, :, :)))/opts.nGPath/255);
 	[A,map] = rgb2ind(firstFrame,256); 
 	imwrite(A,map,fname,'gif','LoopCount',Inf,'DelayTime',1/15);
 	for frame=2:size(data.guesses, 3)
