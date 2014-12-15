@@ -10,18 +10,18 @@ opts = defineSIFTPara(opts);
 opts.dataFolder = '../data/';
 opts.imsize = [128, 128, 3]; % frame size
 opts.nT = 3; % number of timepoints
-opts.nG = 15; % number of guesses loaded
+opts.nG = 100; % number of guesses loaded
 opts.nframes = 15; % number of frames per timepoint
 opts.firstlast = false; % use first and last frames only or all frames?
 opts.firstclip = 1; % what clip to start with?
 
-opts.nGchosen = 10; % number of guesses chosen in preprocessing
+opts.nGchosen = 100; % number of guesses chosen in preprocessing
 opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
 opts.gtruth = false; % compare HOG to ground truth? (thinking this may not really be a good thing to do after all...)
 
 opts.forceAlign = false;
 
-opts.flowMethod = 'sift'; % How to compute flow? ('ssd' or 'sift')
+opts.flowMethod = 'ssd'; % How to compute flow? ('ssd' or 'sift')
 
 opts.minimize = 'prev'; % metric to minimize in flow ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
 opts.nGPath = 5; % how many guesses are selected to be a part of the "path" thru the clips
@@ -35,6 +35,7 @@ opts.bumpUpGradient = 1; %3.0*opts.nGPath; % 1.0: no scaling.  >1.0: more defini
 
 opts.smooth = true; 
 opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses
+opts.weightLLH = true;
 
 % Load data
 disp('loading data...');
@@ -61,6 +62,10 @@ if strcmp(opts.flowMethod, 'sift')
 elseif strcmp(opts.flowMethod, 'ssd')
 	disp('SSD flow...');
 	data = runSSD(data, opts);
+	disp('done');
+elseif strcmp(opts.flowMethod, 'hog')
+	disp('HOG flow...');
+	data = runHOG(data, opts);
 	disp('done');
 end
 
@@ -89,5 +94,5 @@ if opts.morph
 end
 
 if opts.gif
-	makeGIF(data.result, '../guess.gif', opts.nframes);
+	makeGIF(data.result, '../guess100llh.gif', opts.nframes);
 end
