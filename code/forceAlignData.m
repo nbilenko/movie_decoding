@@ -10,7 +10,15 @@ function data = forceAlignData(data, opts)
             alignTo = im2double(squeeze(data.guesses(timepoint, 1, frame, :, :, :)));
             for guess=2:opts.nG
                 align = im2double(squeeze(data.guesses(timepoint, guess, frame, :, :, :)));
-                alignt = pyramidAlign(align, alignTo);
+                if strcmp(opts.align, 'ssd')
+                    [alignt,~,~] = pyramidAlign(align, alignTo);
+                end
+                if strcmp(opts.align, 'gradient')
+                    toGrad = doGradient(alignTo,false);
+                    grad = doGradient(align,false);
+                    [~,xshift,yshift] = pyramidAlign(grad,toGrad);
+                    alignt = circshift(align,[xshift,yshift]);
+                end
                 data.guesses(timepoint, guess, frame, :, :, :) = alignt;
             end
         end

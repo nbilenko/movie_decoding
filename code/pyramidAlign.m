@@ -1,8 +1,13 @@
-function alignt = pyramidAlign(theesImg, toTheesImg)
+function [alignt,bestX,bestY] = pyramidAlign(theesImg, toTheesImg)
 
     function score = scoreAlignment(dis, dat)
         [xsz,ysz,csz] = size(dis);
         score = 1-(sum(sum(sum((dis-dat).^2)))/(xsz*ysz*csz));
+        if score < 0
+            % we had color images we are SSDing; just divide by 255 in each
+            % dimension to correct for this scaling
+            score = 1-(sum(sum(sum((dis-dat).^2)))/(xsz*ysz*csz*255*255));
+        end
     end
 
     function [bestX,bestY] = pyrAlign(thisImg, toThisImg, resizeFactor)
@@ -37,9 +42,10 @@ function alignt = pyramidAlign(theesImg, toTheesImg)
 
     fullSize = 1.0;
     % we'll use one level of laplacian for it
-    gaussian = fspecial('gaussian',[15,15],5);
-    theesEdgeImg  = (theesImg-imfilter(theesImg,gaussian,'replicate'))/255;
-    toTheesEdgeImg  = (toTheesImg-imfilter(toTheesImg,gaussian,'replicate'))/255;
-    [bestX,bestY] = pyrAlign(theesEdgeImg, toTheesEdgeImg, fullSize);
+    %gaussian = fspecial('gaussian',[15,15],5);
+    %theesEdgeImg  = (theesImg-imfilter(theesImg,gaussian,'replicate'))/255;
+    %toTheesEdgeImg  = (toTheesImg-imfilter(toTheesImg,gaussian,'replicate'))/255;
+    %[bestX,bestY] = pyrAlign(theesEdgeImg, toTheesEdgeImg, fullSize);
+    [bestX,bestY] = pyrAlign(theesImg, toTheesImg, fullSize);
     alignt = circshift(theesImg,[bestX,bestY]);
 end
