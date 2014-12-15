@@ -10,10 +10,10 @@ opts = defineSIFTPara(opts);
 opts.dataFolder = '../data/';
 opts.imsize = [128, 128, 3]; % frame size
 opts.nT = 3; % number of timepoints
-opts.nG = 10; % number of guesses loaded
+opts.nG = 15; % number of guesses loaded
 opts.nframes = 15; % number of frames per timepoint
 opts.firstlast = false; % use first and last frames only or all frames?
-opts.firstclip = 14; % what clip to start with?
+opts.firstclip = 1; % what clip to start with?
 
 opts.nGchosen = 10; % number of guesses chosen in preprocessing
 opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
@@ -21,7 +21,9 @@ opts.gtruth = false; % compare HOG to ground truth? (thinking this may not reall
 
 opts.forceAlign = false;
 
-opts.minimize = 'prev'; % metric to minimize in SIFT-flow ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
+opts.flowMethod = 'sift'; % How to compute flow? ('ssd' or 'sift')
+
+opts.minimize = 'prev'; % metric to minimize in flow ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
 opts.nGPath = 5; % how many guesses are selected to be a part of the "path" thru the clips
 
 opts.morph = false; % morph the clips using SIFT-flow?
@@ -29,10 +31,10 @@ opts.gif = true; % create gif at the end?
 
 opts.gradient = true; % visualize in gradient domain? if false, use values.
 opts.inverseGradient = false; % true: white on black. false: black on white.
-opts.bumpUpGradient = 3.0*opts.nGPath; % 1.0: no scaling.  >1.0: more definition of edges.
+opts.bumpUpGradient = 1; %3.0*opts.nGPath; % 1.0: no scaling.  >1.0: more definition of edges.
 
 opts.smooth = true; 
-opts.smoothWindow = 1; % 1: no smoothing, just sum over gueeses
+opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses
 
 % Load data
 disp('loading data...');
@@ -51,10 +53,16 @@ if opts.forceAlign
     disp('done');
 end
 
-% Run SIFT-flow to compute amount of flow across all pairs of clips
-disp('SIFT flow...');
-data = runSIFT(data, opts);
-disp('done');
+% Run flow to compute amount of flow across all pairs of clips
+if strcmp(opts.flowMethod, 'sift')
+	disp('SIFT flow...');
+	data = runSIFT(data, opts);
+	disp('done');
+elseif strcmp(opts.flowMethod, 'ssd')
+	disp('SSD flow...');
+	data = runSSD(data, opts);
+	disp('done');
+end
 
 % Use dynamic programming to find optimal clip ordering
 disp('ordering clips...');

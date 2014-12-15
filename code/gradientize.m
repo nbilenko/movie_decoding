@@ -17,7 +17,15 @@ function data = gradientize(data,opts)
     for timepoint=1:opts.nT
         for guess=1:opts.nG
             for frame=1:opts.nframes
-                 gradiented = doGradient(squeeze(data.guesses(timepoint, guess, frame, :, :, :)),opts.inverseGradient);
+                 % gradiented = doGradient(squeeze(data.guesses(timepoint, guess, frame, :, :, :)),opts.inverseGradient);
+                 [Gmag, Gdir] = imgradient(rgb2gray(squeeze(data.guesses(timepoint, guess, frame, :, :, :))/255));
+                 gradiented = zeros(opts.imsize);
+                if ~opts.inverseGradient
+                    Gmag = imcomplement(Gmag);
+                end
+                 for i=1:3
+                     gradiented(:, :, i) = 255*Gmag;
+                 end
                  data.guesses(timepoint, guess, frame, :, :, :) = gradiented * opts.bumpUpGradient;
             end
         end
