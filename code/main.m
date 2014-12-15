@@ -19,7 +19,8 @@ opts.nGchosen = 100; % number of guesses chosen in preprocessing
 opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
 opts.gtruth = false; % compare HOG to ground truth? (thinking this may not really be a good thing to do after all...)
 
-opts.forceAlign = false;
+opts.forceAlign = true;
+opts.align = 'ssd'; % 'ssd' or 'gradient' ; what do we want to align?
 
 opts.flowMethod = 'ssd'; % How to compute flow? ('ssd' or 'sift')
 
@@ -31,7 +32,7 @@ opts.gif = true; % create gif at the end?
 
 opts.gradient = true; % visualize in gradient domain? if false, use values.
 opts.inverseGradient = false; % true: white on black. false: black on white.
-opts.bumpUpGradient = 1; %3.0*opts.nGPath; % 1.0: no scaling.  >1.0: more definition of edges.
+opts.bumpUpGradient = 1; % 1.0: no scaling.  >1.0: more definition of edges.
 
 opts.smooth = true; 
 opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses
