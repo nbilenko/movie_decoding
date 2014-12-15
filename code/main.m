@@ -13,7 +13,7 @@ opts.nT = 3; % number of timepoints
 opts.nG = 100; % number of guesses loaded
 opts.nframes = 15; % number of frames per timepoint
 opts.firstlast = false; % use first and last frames only or all frames?
-opts.firstclip = 1; % what clip to start with?
+opts.firstclip = 15; % what clip to start with?
 
 opts.nGchosen = 100; % number of guesses chosen in preprocessing
 opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
@@ -37,6 +37,8 @@ opts.bumpUpGradient = 1; % 1.0: no scaling.  >1.0: more definition of edges.
 opts.smooth = true; 
 opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses
 opts.weightLLH = true;
+
+opts.overlay = true; % overlay the result on top of the input image? works best for gradients.
 
 % Load data
 disp('loading data...');
@@ -86,6 +88,12 @@ if opts.smooth
 	disp('smoothing temporally...');
 	data = tempSmooth(data, opts);
 	disp('done');
+end
+
+if opts.overlay
+    disp('overlaying result with input');
+    data = overlay(data, opts);
+    disp('done');
 end
 
 % make a pretty visualization at the end
