@@ -26,6 +26,6 @@ function data = findPath(data, opts)
     end
     
     % for the first clip, we need to return to our info from pairwiseMeansMat
-    matchingClips = find(data.pairwiseMeans(2,data.cliporder(2,1),:)==min(totalFlowCost(2,:)));
+    [~, matchingClips] = sort(squeeze(data.pairwiseMeans(2,data.cliporder(2,1),:) - min(totalFlowCost(2,:))));
     data.cliporder(1,:) = matchingClips(1:opts.nGPath);
 end

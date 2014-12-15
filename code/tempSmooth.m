@@ -3,7 +3,7 @@ function data = tempSmooth(data, opts)
 	% First, sum over guesses and flatten the guess array:
 	for clip=1:size(data.guesses, 1)
 		for frame=1:size(data.guesses, 3)
-			fr = squeeze(sum(squeeze(data.guesses(clip, data.cliporder(clip,:), frame, :, :, :)))/opts.nGPath/255);
+			fr = squeeze(sum(squeeze(data.guesses(clip, data.cliporder(clip,:), frame, :, :, :)))/opts.nGPath);
 			data.result((clip-1)*opts.nframes+frame, :, :, :) = fr;
 		end
 	end
