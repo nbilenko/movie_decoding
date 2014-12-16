@@ -1,0 +1,9 @@
+%!TEX root = brainreader.tex
+
+\section{Discussion}
+
+As our understanding of the brain becomes more and more precise, this type of visualization will surely get better.  This iteration of the BrainReader project lacks information about colors and semantics: addition of both would certainly lead to even more accurate results.
+
+Additionally, some results in our dataset are certainly more convincing than others.  Data for which there are many nearly-precise matchings in the database (for example, of human faces) lead to much nicer visualizations, while more unusual data (for example, nudibranchs and other sea creatures) must have their edges "re-constituted" by many near matches overlaid.  This is a limitation of the dataset itself; while our alignment and visualization techniques can help, it is challenging to overcome holes in the data.  \valkyrie{we should have a figure here of some failed things from our pipeline.}
+
+In future work, it would be beneficial to quantitatively compare our visualization techniques with the decoded fMRI data: for example by measuring distances between presented edges and edges in the final visualization, or by presenting the visualization to subjects to compare the brain's reaction to it with the brain's reaction to the original stimulus.

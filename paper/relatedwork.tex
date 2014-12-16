@@ -3,3 +3,11 @@
 \section{Related Work}
 
 Our work relates to both basic image processing and video processing.
+
+\subsection{Image Processing}
+
+Most obviously, our work builds off of previous techniques for finding image differences and similarities, like HOG \cite{HOG} and SIFT flow \cite{SIFTflow}.  We use these algorithms wholesale as a component of our pipeline, however our usage of them is slightly different than what was originally proposed: we are neither intentionally detecting humans as in the HOG paper (although we do, incidentally, have a dataset with many humans in it) nor are we trying to align multiple images of the same object as in the SIFT flow paper.
+
+\subsection{Image Search}
+
+Our work is additionally similar to image searching techniques, for example AverageExplorer \cite{averageExplorer}.
