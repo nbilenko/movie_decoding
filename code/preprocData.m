@@ -31,7 +31,7 @@ function data = preprocData(data, opts)
 				end
 			end
 		end
-		[sorted,idxs] = sort(scores, 1);
+		[sorted,idxs] = sort(scores, 2);
 		data.idxs = idxs;
 	end
 end

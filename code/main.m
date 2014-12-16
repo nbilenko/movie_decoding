@@ -15,12 +15,12 @@ opts.nframes = 15; % number of frames per timepoint
 opts.firstlast = false; % use first and last frames only or all frames?
 opts.firstclip = 15; % what clip to start with?
 
-opts.nGchosen = 100; % number of guesses chosen in preprocessing
-opts.preproc = 'none'; % type of preprocessing ('hog', 'ssd', or 'none')
+opts.nGchosen = 10; % number of guesses chosen in preprocessing
+opts.preproc = 'hog'; % type of preprocessing ('hog', 'ssd', or 'none')
 opts.gtruth = false; % compare HOG to ground truth? (thinking this may not really be a good thing to do after all...)
 
 opts.forceAlign = true;
-opts.align = 'ssd'; % 'ssd' or 'gradient' ; what do we want to align?
+opts.align = 'gradient'; % 'ssd' or 'gradient' ; what do we want to align?
 
 opts.flowMethod = 'ssd'; % How to compute flow? ('ssd' or 'sift')
 
@@ -103,5 +103,5 @@ if opts.morph
 end
 
 if opts.gif
-	makeGIF(data.result, '../guess100llh.gif', opts.nframes);
+	makeGIF(data.result, '../guess.gif', opts.nframes);
 end
