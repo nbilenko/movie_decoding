@@ -9,7 +9,7 @@ opts = defineSIFTPara(opts);
 % Defining options
 opts.dataFolder = '../data/';
 opts.imsize = [128, 128, 3]; % frame size
-opts.nT = 3; % number of timepoints
+opts.nT = 2; % number of timepoints
 opts.nG = 100; % number of guesses loaded
 opts.tp_list = [14:16 46:47 240:243 291:292 334:339 361:363 402:404 437:439 468:470];
 opts.nframes = 15; % number of frames per timepoint
