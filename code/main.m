@@ -24,7 +24,7 @@ opts.align = 'gradient'; % 'ssd' or 'gradient' ; what do we want to align?
 
 opts.flowMethod = 'ssd'; % How to compute flow? ('ssd' or 'sift')
 
-opts.minimize = 'prev'; % metric to minimize in flow ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
+opts.minimize = 'avg'; % metric to minimize in flow ('diff' for difference between original clip and guess, 'avg' for average flow, 'prev' for comparing to previous frame difference)
 opts.nGPath = 5; % how many guesses are selected to be a part of the "path" thru the clips
 
 opts.morph = false; % morph the clips using SIFT-flow?
@@ -33,6 +33,7 @@ opts.gif = true; % create gif at the end?
 opts.gradient = true; % visualize in gradient domain? if false, use values.
 opts.inverseGradient = false; % true: white on black. false: black on white.
 opts.bumpUpGradient = 1; % 1.0: no scaling.  >1.0: more definition of edges.
+opts.stretchGradient = true; % true: scale summed gradient to 0:1, false: leave as-is
 
 opts.smooth = true; 
 opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses

@@ -12,10 +12,13 @@ function data = tempSmooth(data, opts)
 				end
 			else
 				fr = squeeze(sum(squeeze(data.guesses(clip, data.cliporder(clip,:), frame, :, :, :)))/opts.nGPath);
-			end
+            end
+            if opts.stretchGradient
+                fr = (fr-min(fr(:,:,:))) ./ (max(fr(:,:,:)-min(fr(:,:,:))));
+            end
 			data.result((clip-1)*opts.nframes+frame, :, :, :) = fr;
 		end
-	end
+    end
 	if opts.smoothWindow > 1
 		data.result = reshape(smooth(reshape(data.result, opts.nT*opts.nframes, prod(opts.imsize)), opts.smoothWindow), opts.nT*opts.nframes, opts.imsize(1), opts.imsize(2), opts.imsize(3));
 	end

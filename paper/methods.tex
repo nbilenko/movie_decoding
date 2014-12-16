@@ -9,24 +9,52 @@ Our processing pipeline takes as input two pieces of data for each second:
 \item The log-likelihood (LLH) of each guess
 \end{itemize}
 
-We first forcibly align clips using pyramid-based HOG.  We then extract SIFT features from the beginning and ending of each of the top guesses and calculate SIFT flow between them.  Using cost back-propagation, we find the lowest-cost path through the remaining clips.  Finally, we perform morphing between these clips using SIFT keypoints and output the final clip compilations.
+We experimented with a variety of options for the 5 core steps of \emph{Preprocessing}, \emph{Forced Alignment}, \emph{Flow Calculation}, \emph{Pathfinding}, and \emph{Visualization} (see Figure \ref{fig:system}).
 
-Clips (both original and guessed) are 1 second in length, and have 15 frames per second.  We do not have data on whether there are scene breaks within a 1 second clip.  
+\begin{figure}
+\centering
+    \includegraphics[width=1.0\columnwidth]{figures/system.png}
+\caption{We experimented with a variety of options for the five core steps of Preprocessing, Forced Alignment, Flow Calculation, Pathfinding, and Visualization.  Highlighted in red is the most effective path.}
+\label{fig:system}
+\end{figure}
 
-\subsection{Alignment - HOG Features}
+There are a few processes that we used for several steps in our pipeline, described here for later reference:
 
-Histogram of Oriented Gradients (HOG) features roughly indicate edges in an image as well as the orientation of those edges.  We use HOG features to ensure good spatial alignment of guess footage, which results in a nicer-looking average appearance.
+\emph{SSD} - Sum of Squared Differences (SSD) is a single number that represents a ``match'' score between two images.  It takes into account differences across the images' respective color channels, squaring and summing those differences to create one number indicating overall different-ness.
 
-We calculate the HOG features of the highest-ranked clip, then, using gaussian pyramids, we shift all other guess clips around to minimize the SSD between their HOG features and those of the highest-ranked clip.  This process is physically based in the fMRI data, as the visual processing centers of the brain react in specific ways to edges presented in particular orientations and in particular locations across the visual field.  Thus we see this ``pruning'' step as non-essential, as we would expect that the fMRI data and subsequent ranking step (performed prior to our getting the data) is already based on these features.
+\emph{HOG} - Histogram of Oriented Gradients (HOG) descriptors focus on an image's edge data.  The descriptor has a variety of bins representing orientations and locations: images with similar HOG descriptors have similar edge orientations in similar spatial locations.
 
-\subsection{Consistency - SIFT Features}
+\emph{Gradient} - An image's gradient represents change in the image rather than absolute values.  Large changes in the image typically correspond to edges.
 
-Scale-Invariant Feature Transform (SIFT) features, often used in image recognition tasks, can give higher-level information about the contents of a scene.  We want to minimize the key point flow (i.e., scene composition) between the last frame of one clip and the first frame of the next clip.  SIFT keypoints have been used for nearest-neighbor database searches (e.g., in the SIFT flow paper), and can successfully extract, for example, a street image to match a street image, even when the \emph{optical} flow between the two street images is large.  We use this to keep a thematically consistent scene across timesteps.
+\subsection{Weeding}
+While clips are already "weeded" in some sense by the fMRI data search over the video clip database, in order to make an effective visualization we first discard clips that are obviously very different from each other.  In deference to our already-ranked data, we search for clips that are best aligned to the top-ranked guess at each timestep.
 
-We use SIFT flow to calculate costs for transitioning between one clip and the next.  We simply calculate the SIFT flow between the last frame of one clip and the first frame of all potential next clips.  We then use cost back-propagation, i.e., dynamic programming, to find the lowest semantic cost path through all the clips remaining after HOG pruning.
+There are two processes for this: \emph{SSD} and \emph{HOG}.  Intuitively, SSD should be better for preserving color in images, since it takes color into account, while HOG should be better at preserving edges in images.  Therefore, we would expect that HOG-weeded guess clips would have better internal edge consistency.  This appears to be true to some degree (see Figure \ref{fig:weeding}): there fore we select HOG as our weeding tool of choice (in spite of SSD's obvious superiority in time efficiency).
 
-\subsection{Visuals - Image morphing}
+\begin{figure}
+\centering
+    \includegraphics[width=1.0\columnwidth]{figures/preproc.png}
+\caption{The top 5 guesses for one frame weeded based on SSD (top), HOG (middle), and LLH (bottom); and the sum of all five images (right).}
+\label{fig:weeding}
+\end{figure}
 
-To make our output visuals more consistent, we introduce an aspect of warping between the final selected clips.  This warping is intended to preserve object motion and position across clip boundaries: for example, a person walking in one clip should not jump to a new location in the next clip, and she should not drastically change in appearance at the clip boundary.  In addition, we are also confined to the space of clips already selected, and we do not add any new or extended clips to improve overlap information.
+\subsection{Forced Alignment}
+We forcibly align
 
-This step also uses SIFT flow.  We c
+\subsection{Flow Calculation}
+\valkyrie{write me}
+
+\subsection{Pathfinding}
+\natalia{write me}
+
+\subsection{Visualization}
+\natalia{write me}
+
+\subsubsection{Gradient Domain}
+\natalia{write me}
+
+\subsubsection{Smoothing}
+\natalia{write me}
+
+\subsubsection{Overlay}
+\natalia{write me}
