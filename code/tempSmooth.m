@@ -14,7 +14,7 @@ function data = tempSmooth(data, opts)
 				fr = squeeze(sum(squeeze(data.guesses(clip, data.cliporder(clip,:), frame, :, :, :)))/opts.nGPath);
             end
             if opts.stretchGradient
-                fr = (fr-min(fr(:,:,:))) ./ (max(fr(:,:,:)-min(fr(:,:,:))));
+                fr = (fr-min(min(min((fr(:,:,:)))))) ./ (max(max(max(fr(:,:,:)))-min(min(min(fr(:,:,:))))));
             end
 			data.result((clip-1)*opts.nframes+frame, :, :, :) = fr;
 		end
