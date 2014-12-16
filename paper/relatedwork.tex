@@ -2,12 +2,17 @@
 
 \section{Related Work}
 
-Our work relates to both basic image processing and video processing.
+Our work relates to image processing, image search, and video processing.
 
 \subsection{Image Processing}
 
-Most obviously, our work builds off of previous techniques for finding image differences and similarities, like HOG \cite{HOG} and SIFT flow \cite{SIFTflow}.  We use these algorithms wholesale as a component of our pipeline, however our usage of them is slightly different than what was originally proposed: we are neither intentionally detecting humans as in the HOG paper (although we do, incidentally, have a dataset with many humans in it) nor are we trying to align multiple images of the same object as in the SIFT flow paper.
+Most obviously, our work builds off of previous techniques for finding image differences and similarities, like HOG \cite{HOG} and SIFT flow \cite{SIFTflow}.  We use these algorithms wholesale as a component of our pipeline, however our usage of them is slightly different than what was originally proposed: we are neither intentionally detecting humans as in the HOG paper (although we do, incidentally, have a dataset with many humans in it) nor are we trying to align multiple images of the same object as in the SIFT flow paper.  Instead, our processing techniques are focused on processing sets of images to become more similar and create an effective visualization.
 
 \subsection{Image Search}
 
-Our work is additionally similar to image searching techniques, for example AverageExplorer \cite{averageExplorer}.
+Our work is additionally similar to image searching techniques, for example AverageExplorer \cite{averageExplorer}.  The AverageExplorer work focuses on finding multiple modes from within a set of images, which leads to averaging being more meaningful.  For example, averaging all images of "kids with Santa" leads to some red and white but mostly a mess, while finding multiple modes (e.g., kid on one knee, kid on other knee, kids on both knees) leads to much sharper average images for each mode.  Our technique is similar: our pathfinding technique searches for bands of images that are the most similar to average together for the final visualization.
+
+SIFT flow \cite{SIFTflow} can also be viewed as an image searching tool, although it is most useful for much larger datasets than our own.
+
+\subsection{Video Processing}
+\natalia{write me}
