@@ -11,6 +11,7 @@ opts.dataFolder = '../data/';
 opts.imsize = [128, 128, 3]; % frame size
 opts.nT = 3; % number of timepoints
 opts.nG = 100; % number of guesses loaded
+opts.tp_list = [14:16 46:47 240:243 291:292 334:339 361:363 402:404 437:439 468:470];
 opts.nframes = 15; % number of frames per timepoint
 opts.firstlast = false; % use first and last frames only or all frames?
 opts.firstclip = 15; % what clip to start with?
@@ -43,7 +44,7 @@ opts.overlay = true; % overlay the result on top of the input image? works best 
 
 % Load data
 disp('loading data...');
-data = loadData(opts); %6D guess matrix and 5D original clip matrix, first and last frames only
+[data, opts] = loadData(opts); %6D guess matrix and 5D original clip matrix, first and last frames only
 disp('done');
 
 % Preprocess data
