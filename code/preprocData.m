@@ -1,6 +1,6 @@
 function data = preprocData(data, opts)
 	if strcmp(opts.preproc, 'none')
-		data.idxs = repmat([1:opts.nT], opts.nG, 1)';
+		data.idxs = repmat([1:opts.nG], opts.nT, 1);
 	else
 		scores = zeros(opts.nT, opts.nG);
 
