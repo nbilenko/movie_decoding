@@ -33,7 +33,7 @@ opts.gif = true; % create gif at the end?
 opts.gradient = true; % visualize in gradient domain? if false, use values.
 opts.inverseGradient = false; % true: white on black. false: black on white.
 opts.bumpUpGradient = 1; % 1.0: no scaling.  >1.0: more definition of edges.
-opts.stretchGradient = true; % true: scale summed gradient to 0:1, false: leave as-is
+opts.stretchGradient = false; % true: scale summed gradient to 0:1, false: leave as-is
 
 opts.smooth = true; 
 opts.smoothWindow = 5; % 1: no smoothing, just sum over gueeses
