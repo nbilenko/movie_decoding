@@ -1,7 +1,7 @@
 %!TEX root = brainreader.tex
 
 \section{Introduction}
-\IEEEPARstart{F}{unctional} magnetic resonance imaging, or fMRI, is a technology used in neuroscientific research for recording brain activity. It can be used for a technique called ``brain decoding'', which refers to identifying sensory stimuli or brain states that an individual is experiencing, based on their brain activity. Researchers have been able to use fMRI data to decode visual stimuli in several fMRI studies (\cite{Kamitani}; \cite{Naselaris}; \cite{Nishimoto}).
+\IEEEPARstart{F}{unctional} magnetic resonance imaging, or fMRI, is a technology used in neuroscientific research for recording brain activity. It can be used for a technique called ``brain decoding'', which refers to identifying sensory stimuli or brain states that an individual is experiencing, based on their brain activity. Researchers have been able to use fMRI data to decode visual stimuli in several fMRI studies (\cite{Kamitani, Naselaris, Nishimoto}).
 
 The most complex reconstruction of visual information to date was done by Nishimoto and colleagues in the Gallant lab at UC Berkeley. The researchers built a forward model predicting fMRI signals in the visual cortex from the structural content in the movies seen by the subject. The structural content was captured by processing the movies with spatiotemporal motion energy filters. These filters represent spatial frequency, temporal frequency, and orientation features at different scales and locations on the screen. 
 
@@ -13,7 +13,7 @@ The model was successful, and using the likelihood of brain activity to identify
 \begin{figure}[t]
 \centering
     \includegraphics[width=1.0\columnwidth]{figures/fig1B.png}
-\caption{a) The first generation of visualization for BrainReader clips: the top 100 guesses are simply averaged and overlaid to create an output image at each frame.  This belies the accuracy of the technique, which is quite high. b) Our improved visualization.}
+\caption{a) The first generation of visualization for BrainDreamer clips: the top 100 guesses are simply averaged and overlaid to create an output image at each frame.  This belies the accuracy of the technique, which is quite high. b) Our improved visualization.}
 \label{fig:avg}
 \end{figure}
 
