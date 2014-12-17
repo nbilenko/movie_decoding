@@ -67,13 +67,20 @@ The final flow calculation we implemented was \emph{HOG}-based flow.  This again
 
 Both the SSD and HOG techniques are the same as the ones we tried above before aligning the images. Thus, we only use the weeding step for the SIFT flow version of this step.
 
-We compare the various flow calculation techniques tested in Figure \ref{fig:flows}.
+We compare the various flow calculation techniques tested in Figure \ref{fig:flows} and Figure \ref{fig:comparison}.
 
 \begin{figure}
 \centering
     \includegraphics[width=1.0\columnwidth]{figures/lowflowstitled.png}
 \caption{Various techniques can be used to calculate the ``difference'' between two images (in our case, the last frame of one clip and the first frame of the following clip).  We implemented SSD (focus on colors), HOG (focus on edges), and SIFT (focus on semantics).}
 \label{fig:flows}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=1.0\columnwidth]{figures/methodcomp.png}
+\caption{Comparison of techniques to compute the best clip progression. In the top row, the images are weeded out from 100 best clips to 20 best clips using either just the log-likelihood of the fMRI model (LLH), SSD, or HOG features. In the bottom row, SIFT-flow is used to compute the best progression in addition to the weeding. The result is an average of the best 5 clips in the path, visualized as the gradient magnitude with the gradient magnitude of the original clip overlayed in red.}
+\label{fig:comparison}
 \end{figure}
 
 \subsection{Pathfinding}
