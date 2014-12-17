@@ -33,7 +33,7 @@ We attempted two processes for this: \emph{SSD} and \emph{HOG}.  Intuitively, SS
 
 \begin{figure}
 \centering
-    \includegraphics[width=1.0\columnwidth]{figures/preproc.png}
+    \includegraphics[width=0.95\columnwidth]{figures/preproc.png}
 \caption{The top 5 guesses for one frame weeded based on SSD (top), HOG (middle), and LLH (bottom); and the sum of all five images (right).}
 \label{fig:weeding}
 \end{figure}
@@ -75,7 +75,6 @@ We compare the various flow calculation techniques tested in Figure \ref{fig:flo
 \caption{Various techniques can be used to calculate the ``difference'' between two images (in our case, the last frame of one clip and the first frame of the following clip).  We implemented SSD (focus on colors), HOG (focus on edges), and SIFT (focus on semantics).}
 \label{fig:flows}
 \end{figure}
-
 
 \subsection{Pathfinding}
 To find the optimal path through the clips, the whole set of clips can be seen as a Markov chain. There is a node at each second of the reconstructed movie, and the possible clips for that second representing the states of that node. The flow metrics between each pair of clips constitue the values of the transition matrix between all states. We used dynamic programming to find the optimal path through the transition matrix. First, we found the lowest cumulative cost to get to each consecutive clip in the transition matrix. Then, we backtracked through the transition cost matrix to find the cheapest path for one or several clips. After some testing, we chose a path of five clips, as it produced the most visually appealing results.
