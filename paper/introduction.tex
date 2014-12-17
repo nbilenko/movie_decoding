@@ -7,13 +7,13 @@ The most complex reconstruction of visual information to date was done by Nishim
 
 Ridge regression was used to fit a predictive model between the motion energy parameterization of the movies and the fMRI responses at each recording site (voxel) in the brain. A Bayesian approach was then used to build the inverse model. The posterior probability of the movie decoded from brain activity was estimated by combining a likelihood function given by the forward model and a natural movie prior. In the absence of an explicit distribution of natural images, the natural prior was simulated by sampling 18,000,000 seconds of videos from YouTube.
 
-The model was successful, and using the likelihood of brain activity to identify each timepoint in a held-out stimulus set produced the correct result 95\% of the time. To visualize the result of the direct decoding using the natural movie prior, a set of 100 clips with the highest log likelihood according to the model was selected and averaged. The resulting video can be viewed here (http://www.youtube.com/watch?v=nsjDnYxJ0bo). While the decoding results are quite accurate as seen from the identification, the video appears fuzzy and is misleading about the precision of the decoding. Using computational techniques, we can improve the quality of these output videos (Figure \ref{fig:avg})
+The model was successful, and using the likelihood of brain activity to identify each timepoint in a held-out stimulus set produced the correct result 95\% of the time. To visualize the result of the direct decoding using the natural movie prior, a set of 100 clips with the highest log likelihood according to the model was selected and averaged. The resulting video can be viewed here (http://www.youtube.com/watch?v=nsjDnYxJ0bo). While the decoding results are quite accurate as seen from the identification, the video appears fuzzy and is misleading about the precision of the decoding. Using computational techniques, we can improve the quality of these output videos (Figure \ref{fig:avg}).
 
 
 \begin{figure}[t]
 \centering
-    \includegraphics[width=1.0\columnwidth]{figures/average.png}
-\caption{a) The first generation of visualization for BrainReader clips: the top 100 guesses are simply averaged and overlaid to create an output image at each frame.  This belies the accuracy of the technique, which is quite high. b) Our improved visualization \valkyrie{obviously need image here.}.}
+    \includegraphics[width=1.0\columnwidth]{figures/fig1B.png}
+\caption{a) The first generation of visualization for BrainReader clips: the top 100 guesses are simply averaged and overlaid to create an output image at each frame.  This belies the accuracy of the technique, which is quite high. b) Our improved visualization.}
 \label{fig:avg}
 \end{figure}
 
