@@ -1,11 +1,13 @@
 %!TEX root = brainreader.tex
 
 \section{Introduction}
-\IEEEPARstart{F}{unctional} magnetic resonance imaging, or fMRI, data can shed light on what individuals are looking at.  Specific areas in the brain are known to react strongly to particular line orientations and locations.  Using activation data from these centers, such fMRI data can ``reconstruct'' what an individual is seeing.
+\IEEEPARstart{F}{unctional} magnetic resonance imaging, or fMRI, is a technology used in neuroscientific research for recording brain activity. It can be used for a technique called ``brain decoding'', which refers to identifying sensory stimuli or brain states that an individual is experiencing, based on their brain activity. Researchers have been able to use fMRI data to decode visual stimuli in several fMRI studies (Kamitani and Tong, 2005; Naselaris et al., 2010; Nishimoto et al., 2011).
 
-The Gallant lab from UC Berkeley has worked on this problem previously, demonstrating \valkyrie{citation needed} that they can perform this reconstruction by averaging images from a training set.  The top 100 images whose recorded fMRI profiles match most closely with the recorded data are simply stacked on top of each other to create output videos.
+The most complex reconstruction of visual information to date was done by Nishimoto and colleagues in the Gallant lab at UC Berkeley. The researchers built a forward model predicting fMRI signals in the visual cortex from the structural content in the movies seen by the subject. The structural content was captured by processing the movies with spatiotemporal motion energy filters. These filters represent spatial frequency, temporal frequency, and orientation features at different scales and locations on the screen. 
 
-However, this type of visualization is very ``messy'': while the quantified fMRI matches are quite strong, the visual output video stacks are misleadingly inaccurate.  Using computational techniques, we can improve the quality of these output videos (Figure \ref{fig:avg})
+Ridge regression was used to fit a predictive model between the motion energy parameterization of the movies and the fMRI responses at each recording site (voxel) in the brain. A Bayesian approach was then used to build the inverse model. The posterior probability of the movie decoded from brain activity was estimated by combining a likelihood function given by the forward model and a natural movie prior. In the absence of an explicit distribution of natural images, the natural prior was simulated by sampling 18,000,000 seconds of videos from YouTube.
+
+The model was successful, and using the likelihood of brain activity to identify each timepoint in a held-out stimulus set produced the correct result 95\% of the time. To visualize the result of the direct decoding using the natural movie prior, a set of 100 clips with the highest log likelihood according to the model was selected and averaged. The resulting video can be viewed here (http://www.youtube.com/watch?v=nsjDnYxJ0bo). While the decoding results are quite accurate as seen from the identification, the video appears fuzzy and is misleading about the precision of the decoding. Using computational techniques, we can improve the quality of these output videos (Figure \ref{fig:avg})
 
 
 \begin{figure}[t]
@@ -16,7 +18,7 @@ However, this type of visualization is very ``messy'': while the quantified fMRI
 \end{figure}
 
 
-Instead of a simple averaging process for turning guesses into an output video, we used several more sophisticated approaches.  First, we simply performed weighted averaging, using clip ranking as our weights.  This already constituted an improvement over na\"{i}ve weighting (Figure \ref{fig:weighted}).
+Instead of a simple averaging process for turning guesses into an output video, we used several more sophisticated approaches.  First, we simply performed weighted averaging, using relative log likelihood scores of the clips as our weights.  This already constituted an improvement over na\"{i}ve weighting (Figure \ref{fig:weighted}).
 
 \begin{figure}[t]
 \centering
