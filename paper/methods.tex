@@ -24,12 +24,12 @@ There are a few processes that we used for several steps in our pipeline, descri
 
 \emph{HOG} - Histogram of Oriented Gradients (HOG) descriptors focus on an image's edge data.  The descriptor has a variety of bins representing orientations and locations: images with similar HOG descriptors have similar edge orientations in similar spatial locations \cite{HOG}.
 
-\emph{Gradient} - An image's gradient represents change in the image rather than absolute values.  Large changes in the image typically correspond to edges.
+\emph{Gradient} - An image's gradient magnitude is equal to the square root of the sum of squares of the x-gradient and y-graident and represents change in the image rather than absolute values.  Large changes in the image typically correspond to edges.
 
 \subsection{Weeding}
-While clips are already "weeded" in some sense by the fMRI data search over the video clip database, in order to make an effective visualization we first discard clips that are obviously very different from each other.  In deference to our already-ranked data, we search for clips that are best aligned to the top-ranked guess at each time step.
+While the 100 clips are already chosen to correspond to the fMRI data by the log-likelihood values of the model, in order to make an effective visualization we first discard clips that have very jarring transitions between timepoints. By minimizing the change in the content of the first frame of each clip and the last frame of the previous clip, we smooth the set of clips to one with smoother transitions.
 
-There are two processes for this: \emph{SSD} and \emph{HOG}.  Intuitively, SSD should be better for preserving color in images, since it takes color into account, while HOG should be better at preserving edges in images.  Therefore, we would expect that HOG-weeded guess clips would have better internal edge consistency.  This appears to be true to some degree (see Figure \ref{fig:weeding}): therefore we select HOG as our weeding tool of choice (in spite of SSD's obvious superiority in time efficiency).
+We attempted two processes for this: \emph{SSD} and \emph{HOG}.  Intuitively, SSD should be better for preserving color across clips, since it takes color into account, while HOG should be better at preserving the edge content from one clip to another.  Therefore, we would expect that HOG-weeded guess clips would have better shape consistency.  This appears to be true to some degree (see Figure \ref{fig:weeding}): therefore we select HOG as our weeding tool of choice (in spite of SSD's obvious superiority in time efficiency).
 
 \begin{figure}
 \centering
@@ -39,7 +39,7 @@ There are two processes for this: \emph{SSD} and \emph{HOG}.  Intuitively, SSD s
 \end{figure}
 
 \subsection{Forced Alignment}
-We forcibly align our guesses to each other: this makes the final visualization more pleasing, in addition to making flow calculations (discussed next) more meaningful.  This step is consistent with the fMRI data: the Gabor wavelet filters originally used to select the 100 closest guesses have limited accuracy (less than pixel-level accuracy) \valkyrie{Natalia, call me out if this is bullshit!}; thus we can improve our visualization by alignment at a pixel level.
+We forcibly align our guesses to each other: this makes the final visualization more pleasing, in addition to making flow calculations (discussed next) more meaningful. This precision of decoded alignment cannot be exact with fMRI data, and thus this alignment is justified. Although some neurons, particularly in early visual areas, are tuned precisely to very small portions of the visual field, fMRI voxels average over hundreds of thousands of neurons, and such fine tuning is lost. Nonetheless, voxels are spatially tuned, well enough to recover retinotopic organization of the visual areas, but this tuning is at less than pixel accuracy. Thus we can improve our visualization by alignment at a pixel level.
 
 The two forced alignment metrics we tested were \emph{SSD} and \emph{gradient}.
 
@@ -52,18 +52,20 @@ SSD-based alignment forcing encourages alignment of colors, while gradient-based
 \label{fig:align}
 \end{figure}
 
-For our final videos, we selected to use gradient-based alignment: visualizing our output in the gradient domain is more "true" to the fMRI data, which only accounts for shape and ignores color, and gradient-based alignment lends itself to gradient-based visualization.
+For our final videos, we selected to use gradient-based alignment: visualizing our output in the gradient domain is more ``true'' to the fMRI data, which only accounts for shape and ignores color, and gradient-based alignment lends itself to gradient-based visualization.
 
 \subsection{Flow Calculation}
 We elected to reduce the number of clips shown in the final visualization from 100 to a much smaller number, which allows us some additional flexibility in stringing the clips together.  Instead of needing to create transitions from every clip from one time step into every clip from the next time step, we are able to take one or a few clips from the 100 best guesses and create a smooth path through those clips.
 
-But what makes a ``smooth'' path?  Ideally, a smooth path is one where the last frame of one clip lines up with the first frame of the following clip: various techniques have been tried to determine the "difference" between two images.
+But what makes a ``smooth'' path?  Ideally, a smooth path is one where the last frame of one clip lines up with the first frame of the following clip: various techniques have been tried to determine the ``difference'' between two images.
 
-\emph{SIFT flow} \cite{SIFTflow} finds SIFT keypoints in two images and estimates the ``flow'' of these keypoints between the two images. This type of matching rewards scenes that are semantically, though perhaps not compositionally, similar: e.g., two images of streets would likely have low SIFT flow, while an image with a street at the bottom and an image with a river at the bottom would likely have high SIFT flow.  We had high hopes for this technique, however our dataset (only 100 guess clips per timestamp) did not enable us to find a visually smooth path using SIFT flow.  Additionally, SIFT flow requires an enormous time overhead to calculate.
+\emph{SIFT flow} \cite{SIFTflow} finds SIFT keypoints in two images and estimates the ``flow'' of these keypoints between the two images. This type of matching rewards scenes that are semantically, though perhaps not compositionally, similar: e.g., two images of streets would likely have low SIFT flow, while an image with a street at the bottom and an image with a river at the bottom would likely have high SIFT flow.  We found the smoothest paths using SIFT flow. Unfortunately, it is much more computationally expensive than other techniques we tried, but the improvement was much greater.
 
 A second technique for path smoothness is \emph{SSD}.  Used in this part of the pipeline, SSD will ideally minimize jumps in color and composition between adjacent time steps, making clips flow smoothly into each other.
 
 The final flow calculation we implemented was \emph{HOG}-based flow.  This again focuses on edge orientation and location, and lends itself to visualization consistency in the gradient domain.
+
+Both the SSD and HOG techniques are the same as the ones we tried above before aligning the images. Thus, we only use the weeding step for the SIFT flow version of this step.
 
 We compare the various flow calculation techniques tested in Figure \ref{fig:flows}.
 
@@ -76,16 +78,13 @@ We compare the various flow calculation techniques tested in Figure \ref{fig:flo
 
 
 \subsection{Pathfinding}
-\natalia{write me}
+To find the optimal path through the clips, the whole set of clips can be seen as a Markov chain. There is a node at each second of the reconstructed movie, and the possible clips for that second representing the states of that node. The flow metrics between each pair of clips constitue the values of the transition matrix between all states. We used dynamic programming to find the optimal path through the transition matrix. First, we found the lowest cumulative cost to get to each consecutive clip in the transition matrix. Then, we backtracked through the transition cost matrix to find the cheapest path for one or several clips. After some testing, we chose a path of five clips, as it produced the most visually appealing results.
 
 \subsection{Visualization}
-\natalia{write me}
+We visualized the resuling movies in several ways. First, we averaged the clips in the chosen path to obtain one continuous movie. This gave us the most direct comparison to the previous approach of averaging the top 100 clips. Before averaging, we weighted the clips by the relative fMRI model log-likelihood of each clip. 
 
-\subsubsection{Gradient Domain}
-\natalia{write me}
+\subsubsection{Gradient Domain and Overlay}
+The fMRI model is based on spatiotemporal features of the movies, including spatial frequencies and orientations. We wanted to emphasize the decoding of these features by highlighting the edges in the reconstructed movies. To do this, we visualized the reconstructed movies in the gradient domain. The gradient magnitude of all clips was computed. We displayed the inverse magnitude, showing dark edges on a white background. To demonstrate the difference between the reconstructed and original movie, we also computed the gradient of the original movie. We overlayed the original gradient movie in red over the reconstructed gradient movie in black and white.
 
 \subsubsection{Smoothing}
-\natalia{write me}
-
-\subsubsection{Overlay}
-\natalia{write me}
+To make the appearance of the movie smoother, we averaged the clips temporally with a moving average filter. The averaging was done with each frame weighted by the reciprocal of the window width. We experimented with several sliding window width and chose five frames as the best span.
