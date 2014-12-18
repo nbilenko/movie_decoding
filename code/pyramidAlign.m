@@ -13,6 +13,8 @@ function [alignt,bestX,bestY] = pyramidAlign(theesImg, toTheesImg)
     function [bestX,bestY] = pyrAlign(thisImg, toThisImg, resizeFactor)
         reduceFactor = 2.0;
         smallestDim = 25;
+        bestX = 0;
+        bestY = 0;
 
         resizedThis = imresize(thisImg, resizeFactor);
         resizedTo = imresize(toThisImg, resizeFactor);
